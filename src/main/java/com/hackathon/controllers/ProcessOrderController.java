@@ -27,7 +27,7 @@ public class ProcessOrderController {
 	@Autowired
 	SaveReportToFile saveFileReportService;
 	
-	@RequestMapping(value = "/test" , method= RequestMethod.POST, produces = "application/json", consumes = "application/json" )
+	@RequestMapping(value = "/submitCompletedItemsListForProcess" , method= RequestMethod.POST, produces = "application/json", consumes = "application/json" )
 	@ResponseBody
 	public ResponseEntity<?> updateProcessOrder(@RequestBody ProcessOrderReceiver receiver)
 	{

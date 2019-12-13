@@ -1,6 +1,8 @@
 package com.hackathon.controllers;
 
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hackathon.entities.ProcessOrderReceiver;
+import com.hackathon.entities.ProcessOrderReceiverItem;
 import com.hackathon.repositories.ProcessOrderReceiverRepository;
 
 @Controller
@@ -25,7 +28,7 @@ public class ProcessOrderController {
 	@ResponseBody
 	public void updateProcessOrder(@RequestBody ProcessOrderReceiver receiver)
 	{
-
+		orderRepo.saveAll(receiver.getItems());
 		orderRepo.save(receiver);
 		
 	}

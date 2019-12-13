@@ -23,6 +23,18 @@ public class ProcessOrderReceiver {
 	@Column(name="items")
 	@OneToMany()
 	private List<ProcessOrderReceiverItem> items;
+	public int getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
+	public List<ProcessOrderReceiverItem> getItems() {
+		return items;
+	}
+	public void setItems(List<ProcessOrderReceiverItem> items) {
+		this.items = items;
+	}
 
 
 }

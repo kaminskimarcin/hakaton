@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.hackathon.dtos.ProcessOrderReceiverDTO;
 import com.hackathon.dtos.ProcessOrderReceiverItemDTO;
@@ -18,7 +15,8 @@ import com.hackathon.repositories.ProcessOrderReceiverItemRepository;
 import com.hackathon.repositories.ProcessOrderReceiverRepository;
 import com.hackathon.services.impl.SaveReportToFile;
 
-@Controller
+@RestController
+@CrossOrigin("*")
 public class ProcessOrderController {
 	
 	@Autowired

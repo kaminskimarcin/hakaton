@@ -1,15 +1,15 @@
 package com.hackathon.controllers;
 
+import com.hackathon.entities.ProcessOrderItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.hackathon.entities.ProcessOrderDefinition;
 import com.hackathon.services.impl.ProcessOrderDefinitionService;
 
-@Controller
+import java.util.List;
+
+@RestController
+@CrossOrigin("*")
 public class ProcessOrderDefinitionController {
 
 	@Autowired
@@ -17,10 +17,10 @@ public class ProcessOrderDefinitionController {
 
 	
 	
-	@GetMapping("/getRequiredItems")
+	@GetMapping("/getItemsListForProcess")
 	@ResponseBody
-	public ProcessOrderDefinition getListOfRequiredItems(@RequestParam(required = false) long orderID) {
+	public List<ProcessOrderItem> getListOfRequiredItems(@RequestParam(required = false) long orderID) {
 		
-		return processOrderDefService.findById(orderID).get();
+		return processOrderDefService.findById(orderID).get().getItems();
 	}
 }

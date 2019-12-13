@@ -23,6 +23,8 @@ public class ProcessOrderReceiverItem {
 	
 	private int batch;
 
+	private String status;
+
 	public Long getId() {
 		return id;
 	}
@@ -55,7 +57,11 @@ public class ProcessOrderReceiverItem {
 		this.batch = batch;
 	}
 
-	
-	
+	public String getStatus() {
+		return status;
+	}
 
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }

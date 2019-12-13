@@ -26,7 +26,6 @@ public class ProcessOrderController {
 	public void updateProcessOrder(@RequestBody ProcessOrderReceiver receiver)
 	{
 
-		System.out.println(receiver.toString());
 		orderRepo.save(receiver);
 		
 	}

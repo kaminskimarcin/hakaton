@@ -25,7 +25,7 @@ public class ProcessOrderController {
 	@ResponseBody
 	public void updateProcessOrder(@RequestBody ProcessOrderReceiver receiver)
 	{
-
+		
 		orderRepo.save(receiver);
 		
 	}

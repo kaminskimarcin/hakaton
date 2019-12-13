@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -20,7 +21,7 @@ public class ProcessOrderReceiver {
 	@Column(name="order_ID") 
 	private int orderId;
 	@Column(name="items")
-	@ElementCollection(targetClass=ProcessOrderReceiverItem.class)
+	@OneToMany()
 	private List<ProcessOrderReceiverItem> items; 
 	
 

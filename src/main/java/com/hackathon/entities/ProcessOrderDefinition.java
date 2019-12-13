@@ -20,7 +20,7 @@ public class ProcessOrderDefinition {
 	private int orderId;
 	
 	@Column(name="items")
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany()
 	private List<ProcessOrderItem> items; 
 	
 }

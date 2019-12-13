@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.hackathon.entities.ProcessOrderReceiver;
 import com.hackathon.repositories.ProcessOrderReceiverItemRepository;
 import com.hackathon.repositories.ProcessOrderReceiverRepository;
+import com.hackathon.services.impl.SaveReportToFile;
 
 @Controller
 public class ProcessOrderController {
@@ -21,12 +22,16 @@ public class ProcessOrderController {
 	@Autowired
 	ProcessOrderReceiverItemRepository itemRepo;
 	
+	@Autowired
+	SaveReportToFile saveFileReportService;
+	
 	@RequestMapping(value = "/test" , method= RequestMethod.POST, produces = "application/json", consumes = "application/json" )
 	@ResponseBody
 	public void updateProcessOrder(@RequestBody ProcessOrderReceiver receiver)
 	{
 		itemRepo.saveAll(receiver.getItems());
 		orderRepo.save(receiver);
+		saveFileReportService.saveProcessOrderListToFile(receiver);
 		
 	}
 

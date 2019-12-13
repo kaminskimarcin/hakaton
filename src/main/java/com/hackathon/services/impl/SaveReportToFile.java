@@ -14,12 +14,16 @@ public class SaveReportToFile {
 
 	public boolean saveProcessOrderListToFile(ProcessOrderReceiver reciever) {
 		LocalDateTime date = LocalDateTime.now();
-		try(BufferedWriter writer = new BufferedWriter(new FileWriter("Report-"+ date.toString() + ".txt"));){
-			writer.write("Raport" + date.toString());
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter("Report-"+ new Integer(reciever.getOrderId()).toString() + ".txt"));){
+			writer.write("Raport " + date.toString());
 			writer.newLine();
 			writer.write("Order type: ");
 			writer.write(new Integer(reciever.getOrderId()).toString());
+
 			writer.newLine();
+			writer.write("Lp. Name  BatchSize   Quantity");
+			writer.newLine();
+			
 			writer.write("---------------------------------------------------------------");
 			writer.newLine();
 			int i=1;

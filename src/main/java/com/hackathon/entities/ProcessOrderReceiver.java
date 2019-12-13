@@ -22,15 +22,7 @@ public class ProcessOrderReceiver {
 	private int orderId;
 	@Column(name="items")
 	@OneToMany()
-	private List<ProcessOrderReceiverItem> items; 
-	
+	private List<ProcessOrderReceiverItem> items;
 
-
-	
-	
-	
-	
-	
-	
 
 }

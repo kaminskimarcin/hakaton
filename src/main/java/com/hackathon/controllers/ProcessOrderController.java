@@ -6,6 +6,11 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hackathon.entities.ProcessOrderReceiver;
 import com.hackathon.repositories.ProcessOrderReceiverRepository;
@@ -16,13 +21,14 @@ public class ProcessOrderController {
 	@Autowired
 	ProcessOrderReceiverRepository orderRepo;
 	
-//	@PostMapping(value = "/", produces = "application/json")
-//	@ResponseBody
-	public String updateProcessOrder(@Valid ProcessOrderReceiver receiver, BindingResult result)
+	@RequestMapping(value = "/test" , method= RequestMethod.POST, produces = "application/json", consumes = "application/json" )
+	@ResponseBody
+	public void updateProcessOrder(@RequestBody ProcessOrderReceiver receiver)
 	{
+
+		System.out.println(receiver.toString());
 		orderRepo.save(receiver);
 		
-		return "{\"success\":1}";
 	}
 
 }

@@ -2,6 +2,8 @@ package com.hackathon.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,11 +25,13 @@ public class ProcessOrderController {
 	
 	@RequestMapping(value = "/test" , method= RequestMethod.POST, produces = "application/json", consumes = "application/json" )
 	@ResponseBody
-	public void updateProcessOrder(@RequestBody ProcessOrderReceiver receiver)
+	public ResponseEntity<?> updateProcessOrder(@RequestBody ProcessOrderReceiver receiver)
 	{
 		itemRepo.saveAll(receiver.getItems());
 		orderRepo.save(receiver);
 		
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 }

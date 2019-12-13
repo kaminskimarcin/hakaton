@@ -1,29 +1,14 @@
-package com.hackathon.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.Min;
 
-import lombok.Data;
 
-@Entity
-@Data
-public class ProcessOrderReceiverItem {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int pk;
+package com.hackathon.dtos;
 
-	@Column(name="Item_ID")
+public class ProcessOrderReceiverItemDTO {
+
 	private Long id;
-	
-	@Column(name="Description")
+
 	private String description;
 	
-	@Min(1)
 	private int quantity;
 	
 	private int batch;

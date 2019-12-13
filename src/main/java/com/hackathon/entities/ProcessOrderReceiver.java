@@ -1,10 +1,13 @@
 package com.hackathon.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -17,7 +20,16 @@ import lombok.Data;
 @Data
 public class ProcessOrderReceiver {
 	
+	
+	public ProcessOrderReceiver() {
+
+		this.items = new ArrayList<ProcessOrderReceiverItem>();
+	}
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int pk;
+	
+
 	@Column(name="order_ID") 
 	private int orderId;
 	@Column(name="items")

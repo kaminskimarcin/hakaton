@@ -44,8 +44,8 @@ public class ProcessOrderDefinitionService implements IProcessOrderDefinitionSer
         processOrderReceiverRepository.save(receiver);
     }
 
-    public InputStreamResource generateReport(ProcessOrderReceiverDTO receiverDto) {
-        return new InputStreamResource(new ByteArrayInputStream(Objects.requireNonNull(SaveReportToFile.saveProcessOrderListToFile(receiverDto)).toString().getBytes()));
+    public void generateReport(ProcessOrderReceiverDTO receiverDto) {
+        SaveReportToFile.saveProcessOrderListToFile(receiverDto);
     }
 
     public List<ProcessOrderReceiver> getAllAvailableCheckedProcess() {

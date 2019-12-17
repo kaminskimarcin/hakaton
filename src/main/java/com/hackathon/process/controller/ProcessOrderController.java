@@ -27,8 +27,8 @@ public class ProcessOrderController {
     }
 
     @PostMapping(value = "/generateReport", produces = MediaType.APPLICATION_PDF_VALUE, consumes = "application/json")
-    public ResponseEntity<InputStreamResource> generateReport(@RequestBody ProcessOrderReceiverDTO receiverDto) {
-        return ResponseEntity.ok(processOrderDefinitionService.generateReport(receiverDto));
+    public ResponseEntity<?> generateReport(@RequestBody ProcessOrderReceiverDTO receiverDto) {
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/allAvailableCheckedProcess")

@@ -2,7 +2,7 @@ package com.hackathon.dtos;
 
 import java.util.List;
 
-import com.hackathon.entities.ProcessOrderReceiverItem;
+import com.hackathon.process.domain.dto.ProcessOrderReceiverItemDTO;
 
 
 public class ProcessOrderReceiverDTO {

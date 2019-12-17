@@ -8,6 +8,9 @@ import com.hackathon.entities.ProcessOrderReceiverItem;
 public class ProcessOrderReceiverDTO {
 	
 
+	public String hello() {
+		return "hello";
+	}
 	private int orderId;
 
 	private List<ProcessOrderReceiverItemDTO> items;

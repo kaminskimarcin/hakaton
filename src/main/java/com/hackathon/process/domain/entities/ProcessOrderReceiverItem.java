@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 
 @Entity
 @Data
+@Table(name = "PROCESS_ORDER_RECEIVER_ITEM")
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcessOrderReceiverItem {

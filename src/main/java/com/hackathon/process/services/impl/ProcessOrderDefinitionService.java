@@ -12,9 +12,12 @@ import com.hackathon.process.repository.ProcessOrderReceiverRepository;
 import com.hackathon.process.services.IProcessOrderDefinitionService;
 import com.hackathon.process.utils.SaveReportToFile;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -41,7 +44,11 @@ public class ProcessOrderDefinitionService implements IProcessOrderDefinitionSer
         processOrderReceiverRepository.save(receiver);
     }
 
-    public void generateReport(ProcessOrderReceiverDTO receiverDto) {
-        SaveReportToFile.saveProcessOrderListToFile(receiverDto);
+    public InputStreamResource generateReport(ProcessOrderReceiverDTO receiverDto) {
+        return new InputStreamResource(new ByteArrayInputStream(Objects.requireNonNull(SaveReportToFile.saveProcessOrderListToFile(receiverDto)).toString().getBytes()));
+    }
+
+    public List<ProcessOrderReceiver> getAllAvailableCheckedProcess() {
+        return processOrderReceiverRepository.findAll();
     }
 }

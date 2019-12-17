@@ -12,4 +12,8 @@ import java.util.List;
 public class ProcessOrderReceiverDTO {
     private Long orderId;
     private List<ProcessOrderReceiverItemDTO> items;
+    
+	public String hello() {
+		return "hello";
+	}
 }

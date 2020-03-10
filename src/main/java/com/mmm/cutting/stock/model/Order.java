@@ -9,6 +9,6 @@ public class Order {
     private String salesOrder;
     private String item;
     private String desc;
-    private List<com.mmm.cutting.stock.model.SingleOrder> singleOrders;
+    private List<SingleOrder> singleOrders;
     private Long jumboWidth;
 }

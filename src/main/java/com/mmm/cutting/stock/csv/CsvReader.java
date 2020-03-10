@@ -1,5 +1,6 @@
 package com.mmm.cutting.stock.csv;
 
+import com.mmm.cutting.stock.model.Order;
 import com.mmm.cutting.stock.model.SingleOrder;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -16,7 +17,7 @@ public class CsvReader {
         Workbook wb = new XSSFWorkbook(multipartFile.getInputStream());
 
         Iterator<Row> rowItr = wb.getSheetAt(0).iterator();
-        com.mmm.cutting.stock.model.Order order = new com.mmm.cutting.stock.model.Order();
+        Order order = new Order();
         List<SingleOrder> singleOrders = new ArrayList<>();
         while (rowItr.hasNext()) {
             Row row = rowItr.next();
@@ -24,7 +25,7 @@ public class CsvReader {
                 continue;
             }
             Iterator<Cell> cellItr = row.cellIterator();
-            com.mmm.cutting.stock.model.SingleOrder singleOrder = new com.mmm.cutting.stock.model.SingleOrder();
+            SingleOrder singleOrder = new SingleOrder();
             while (cellItr.hasNext()) {
 
                 Cell cell = cellItr.next();

@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CsvReader {
-    public static void readCsv(MultipartFile multipartFile) throws IOException {
+    public static Order readCsv(MultipartFile multipartFile) throws IOException {
         Workbook wb = new XSSFWorkbook(multipartFile.getInputStream());
 
         Iterator<Row> rowItr = wb.getSheetAt(0).iterator();
@@ -27,7 +27,6 @@ public class CsvReader {
             Iterator<Cell> cellItr = row.cellIterator();
             SingleOrder singleOrder = new SingleOrder();
             while (cellItr.hasNext()) {
-
                 Cell cell = cellItr.next();
                 int index = cell.getColumnIndex();
                 switch (index) {
@@ -73,6 +72,8 @@ public class CsvReader {
         order.setSingleOrders(singleOrders);
 
         System.out.println(order.toString());
+
+        return order;
     }
 
     private static Object getValueFromCell(Cell cell) {

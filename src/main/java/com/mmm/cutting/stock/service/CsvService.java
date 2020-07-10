@@ -30,7 +30,7 @@ public class CsvService {
         this.cuttingStockProducer = cuttingStockProducer;
     }
 
-    private String resolvePythonScriptPath(String filename) {
+   private String resolvePythonScriptPath(String filename) {
         File file = new File("src/main/resources/" + filename);
         return file.getAbsolutePath();
     }
@@ -61,14 +61,17 @@ public class CsvService {
 
     private List<String> findBestSolution(String jumboWidth, List<String> uniqueWidth, List<String> widthOccurrences) throws IOException, ScriptException {
         String line = "python " + resolvePythonScriptPath("cssolver.py");
+        String resultFile = "src/main/resources/result.txt";
+        String[] params = new String[]{jumboWidth, uniqueWidth.toString(), widthOccurrences.toString(), resultFile};
+
         CommandLine cmdLine = CommandLine.parse(line);
+        cmdLine.addArguments(params);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
 
         DefaultExecutor executor = new DefaultExecutor();
         executor.setStreamHandler(streamHandler);
-        String[] params = new String[]{jumboWidth, uniqueWidth.toString(), widthOccurrences.toString()};
 
         int exitCode = executor.execute(cmdLine);
 
@@ -83,4 +86,31 @@ public class CsvService {
 
         return new ArrayList<>();
     }
+
+
+//    public static void main(String... args) throws IOException {
+//        String[] params = new String[]{"1500", "[315,310,165,225,260,275,300,120,185,145,155,135]",
+//                "[3,1,1,1,2,2,2,1,1,1,3,2]"};
+//
+//        String line = "python " + resolvePythonScriptPathS("cssolver.py");
+//        CommandLine cmdLine = CommandLine.parse(line);
+//        cmdLine.addArguments(new String[]{"1500", "[315,310,165,225,260,275,300,120,185,145,155,135]",
+//                "[3,1,1,1,2,2,2,1,1,1,3,2]", "src/main/resources/result.txt"});
+//
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
+//
+//        DefaultExecutor executor = new DefaultExecutor();
+//        executor.setStreamHandler(streamHandler);
+//
+//
+//        int exitCode = executor.execute(cmdLine);
+//    }
+//
+//
+//    private static String resolvePythonScriptPathS(String filename) {
+//        File file = new File("src/main/resources/" + filename);
+//        return file.getAbsolutePath();
+//    }
+
 }

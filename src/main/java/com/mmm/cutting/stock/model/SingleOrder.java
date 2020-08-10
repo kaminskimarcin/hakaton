@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class SingleOrder {
-    private Long procOrderId;
-    private Long orderQuantity;
+    private Long procOrd;
+    private Long orderQty;
     private Long width;
 }

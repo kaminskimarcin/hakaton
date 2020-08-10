@@ -1,33 +1,32 @@
 package com.mmm.cutting.stock.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mmm.cutting.stock.csv.CsvReader;
 import com.mmm.cutting.stock.model.Order;
+import com.mmm.cutting.stock.model.OrderResponse;
 import com.mmm.cutting.stock.model.SingleOrder;
 import com.mmm.cutting.stock.producer.CuttingStockProducer;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleScriptContext;
-
 import javax.script.*;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CsvService {
     private final CuttingStockProducer cuttingStockProducer;
+    private final ObjectMapper objectMapper;
 
-    public CsvService(CuttingStockProducer cuttingStockProducer) {
+    public CsvService(CuttingStockProducer cuttingStockProducer, ObjectMapper objectMapper) {
         this.cuttingStockProducer = cuttingStockProducer;
+        this.objectMapper = objectMapper;
     }
 
    private String resolvePythonScriptPath(String filename) {
@@ -35,16 +34,15 @@ public class CsvService {
         return file.getAbsolutePath();
     }
 
-    public void calculate(MultipartFile file) throws IOException, ScriptException {
-        Order order = CsvReader.readCsv(file);
+    public OrderResponse calculate(Order order, HttpServletResponse httpServletResponse) throws IOException, ScriptException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
         List<SingleOrder> singleOrders = order.getSingleOrders();
         HashMap<Long, Long> widthWithOccurrences = new HashMap<>();
 
         for (SingleOrder singleOrder : singleOrders) {
-            widthWithOccurrences.merge(singleOrder.getWidth(), singleOrder.getOrderQuantity(), Long::sum);
+            widthWithOccurrences.merge(singleOrder.getWidth(), singleOrder.getOrderQty(), Long::sum);
         }
 
-        String jumboWidth = order.getJumboWidth().toString();
+        String jumboWidth = String.valueOf(order.getJumboWidth()-10);
         List<String> uniqueWidth = new ArrayList<>();
         List<String> widthOccurrences = new ArrayList<>();
 
@@ -54,13 +52,14 @@ public class CsvService {
             widthOccurrences.add(entry.getValue().toString());
         }
 
-        List<String> response = findBestSolution(jumboWidth, uniqueWidth, widthOccurrences);
+        List<LinkedHashMap<String, Integer>> cuttingStockBestSolution = findBestSolution(jumboWidth, uniqueWidth, widthOccurrences);
 
-        cuttingStockProducer.prepareResult(response);
+        return cuttingStockProducer.prepareResult(cuttingStockBestSolution, jumboWidth, httpServletResponse);
     }
 
-    private List<String> findBestSolution(String jumboWidth, List<String> uniqueWidth, List<String> widthOccurrences) throws IOException, ScriptException {
+    private List<LinkedHashMap<String, Integer>> findBestSolution(String jumboWidth, List<String> uniqueWidth, List<String> widthOccurrences) throws IOException, ScriptException {
         String line = "python " + resolvePythonScriptPath("cssolver.py");
+        String resultFileName = "result.txt";
         String resultFile = "src/main/resources/result.txt";
         String[] params = new String[]{jumboWidth, uniqueWidth.toString(), widthOccurrences.toString(), resultFile};
 
@@ -72,19 +71,11 @@ public class CsvService {
 
         DefaultExecutor executor = new DefaultExecutor();
         executor.setStreamHandler(streamHandler);
+        executor.execute(cmdLine);
 
-        int exitCode = executor.execute(cmdLine);
+        InputStream file = getClass().getClassLoader().getResourceAsStream(resultFileName);
 
-    /*
-        StringWriter writer = new StringWriter();
-        ScriptContext context = new SimpleScriptContext();
-        context.setWriter(writer);
-
-        ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName("python");
-        engine.eval(new FileReader(resolvePythonScriptPath("cssolver.py")), context);*/
-
-        return new ArrayList<>();
+        return objectMapper.readValue(file, List.class);
     }
 
 

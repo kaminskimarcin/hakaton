@@ -47,12 +47,12 @@ public class CsvReader {
                         break;
                     case 3:
                         if (cell.getCellType() != CellType.BLANK) {
-                            singleOrder.setProcOrderId((Long) getValueFromCell(cell));
+                            singleOrder.setProcOrd((Long) getValueFromCell(cell));
                         }
                         break;
                     case 4:
                         if (cell.getCellType() != CellType.BLANK) {
-                            singleOrder.setOrderQuantity((Long) getValueFromCell(cell));
+                            singleOrder.setOrderQty((Long) getValueFromCell(cell));
                         }
                         break;
                     case 5:

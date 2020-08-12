@@ -75,23 +75,15 @@ def valid_pattern(final_patterns, jumbo_length):
         sum = 0
         for length, count in p.items():
             sum += length * count
-        if sum != jumbo_length:
+        if sum < jumbo_length - 10:
             return False
 
     return True
 
-
-# jumbo = 1500
 jumbo = int(sys.argv[1])
-
-# len_opts = [315, 310, 165, 225, 260, 275, 300, 120, 185, 145, 155, 135]
 
 len_opts = sys.argv[2]
 len_opts = list(map(int, len_opts.strip('[]').split(',')))
-
-# A dictionary of the demand for each roll length is created
-# rollDemand = {'315': 3, '310': 1, '165': 1, '225': 1, '260': 2, '275': 2, '300': 2, '120': 1, '185': 1, '145': 1,
-#               '155': 3, '135': 2}
 
 demands = sys.argv[3]
 demands = list(map(int, demands.strip('[]').split(',')))
@@ -128,7 +120,8 @@ cutting_one_roll_patterns = []
 
 for v in prob.variables():
     if v.varValue > 0:
-        cutting_one_roll_patterns.append(patterns[v.name.replace('Patt_', '')])
+        for i in range(int(v.varValue)):
+            cutting_one_roll_patterns.append(patterns[v.name.replace('Patt_', '')])
 
 # The optimised objective function value is printed to the screen
 print("Production Costs = ", value(prob.objective))
@@ -143,4 +136,4 @@ print(is_valid)
 with open(file_name, 'w') as f:
     results = cutting_one_roll_patterns if is_valid else \
         'Error occurred. Losses were found in the proposed patterns'
-    json.dump(results, f)
+    json.dump(cutting_one_roll_patterns, f)

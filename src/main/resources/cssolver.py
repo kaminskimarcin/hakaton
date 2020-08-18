@@ -62,11 +62,7 @@ def make_patterns(total_roll_length, len_opts):
         for rep, l in zip(pattern, len_opts):
             ssum += rep * l
         trim[name] = total_roll_length - ssum
-    # The different cutting lengths are printed, and the number of each roll of that length in each
-    # pattern is printed below. This is so the user can see what each pattern contains.
-    print("Lens: %s" % len_opts)
-    for name, pattern in zip(PatternNames, patterns):
-        print(name + "  = %s" % pattern)
+
     return (PatternNames, patterns, trim)
 
 
@@ -89,8 +85,6 @@ demands = sys.argv[3]
 demands = list(map(int, demands.strip('[]').split(',')))
 rollDemand = dict(zip([str(k) for k in len_opts], demands))
 
-file_name = sys.argv[4]
-
 (PatternNames, patterns, trim) = make_patterns(jumbo, len_opts)
 
 # The RollData is made into separate dictionaries
@@ -109,12 +103,9 @@ for j in len_opts:
     prob += lpSum([pattVars[i] * patterns[i][j] for i in PatternNames]) >= rollDemand[str(j)]
 
 # The problem data is written to an .lp file
-prob.writeLP("SpongeRollProblem.lp")
+#prob.writeLP("SpongeRollProblem.lp")
 # The problem is solved using PuLP's choice of Solver
 prob.solve()
-# The status of the solution is printed to the screen
-print("Status:", LpStatus[prob.status])
-# Each of the variables is printed with it's resolved optimum value
 
 cutting_one_roll_patterns = []
 
@@ -123,17 +114,12 @@ for v in prob.variables():
         for i in range(int(v.varValue)):
             cutting_one_roll_patterns.append(patterns[v.name.replace('Patt_', '')])
 
-# The optimised objective function value is printed to the screen
-print("Production Costs = ", value(prob.objective))
-
-print('Print patterns')
-[print(p) for p in cutting_one_roll_patterns]
-
 is_valid = valid_pattern(cutting_one_roll_patterns, jumbo)
 
-print(is_valid)
+results = cutting_one_roll_patterns if is_valid else  'Error occurred. Losses were found in the proposed patterns'
 
-with open(file_name, 'w') as f:
-    results = cutting_one_roll_patterns if is_valid else \
-        'Error occurred. Losses were found in the proposed patterns'
-    json.dump(cutting_one_roll_patterns, f)
+print(" results ")
+print(json.dumps(results))
+#
+sys.stdout.flush()
+sys.exit(0)

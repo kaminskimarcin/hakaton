@@ -82,29 +82,47 @@ public class CsvService {
                 destroyed = p.waitFor(1, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
-            if (!destroyed) {
+            if (!destroyed || p.isAlive()) {
                 p.destroyForcibly();
             }
         });
     }
 
-//    public static void main(String... args) throws IOException{
-//        Process p = Runtime.getRuntime().exec("python C:\\Users\\A8XY6ZZ\\IdeaProjects\\hakaton2\\src\\main\\resources\\cssolver.py 1500 [315,310,165,225,260,275,300,120,185,145,155,135]" +
-//                " [3,1,1,1,2,2,2,1,1,1,3,2]");
+//    public static void main(String... args) throws IOException, InterruptedException {
 //
-//        List<LinkedHashMap<String, Integer>> results = List.of();
-//        ObjectMapper objectMapper = new ObjectMapper();
+//        int count = 1;
+//        List<Process> process = new ArrayList<>(21);
 //
-//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-//            results = objectMapper.readValue(reader.lines().collect(Collectors.joining()).split("results")[1], List.class);
+//        while (count < 5) {
+//
+//            Process p = Runtime.getRuntime().exec("python C:\\Users\\A8XY6ZZ\\IdeaProjects\\hakaton2\\src\\main\\resources\\cssolver.py 1500 [315,310,165,225,260,275,300,120,185,145,155,135]" +
+//                    " [3,1,1,1,2,2,2,1,1,1,3,2]");
+//
+//            process.add(p);
+//
+//            System.out.print(" When start " + p.isAlive() + " thread: " + Thread.currentThread().getName() + "\n");
+//
+//            List<LinkedHashMap<String, Integer>> results = List.of();
+//            ObjectMapper objectMapper = new ObjectMapper();
+//
+//            try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
+//                results = objectMapper.readValue(reader.lines().collect(Collectors.joining()).split("results")[1], List.class);
+//            }
+//
+//
+//            destroyProcessAsync(p);
+//
+//            System.out.print(results  + "\n");
+//
+//            Thread.sleep(10000);
+//
+//            ++count;
 //        }
 //
+//        System.out.println("Still running processes");
+//        process.forEach(p -> System.out.println(" Pid: " + p.pid() + "isAlive: " + p.isAlive() + "\n"));
 //
-//        destroyProcessAsync(p);
-//
-//
-//        System.out.println(results);
-//
-//    };
+//    }
 }

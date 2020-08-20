@@ -7,6 +7,8 @@ import com.mmm.cutting.stock.model.SingleOrder;
 import com.mmm.cutting.stock.producer.CuttingStockProducer;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import lombok.var;
+import org.h2.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 
@@ -42,7 +44,7 @@ public class CsvService {
             widthWithOccurrences.merge(singleOrder.getWidth(), singleOrder.getOrderQty(), Long::sum);
         }
 
-        String jumboWidth = String.valueOf(order.getJumboWidth()-10);
+        String jumboWidth = String.valueOf(order.getJumboWidth());
         List<String> uniqueWidth = new ArrayList<>();
         List<String> widthOccurrences = new ArrayList<>();
 
@@ -60,8 +62,10 @@ public class CsvService {
     public static List<LinkedHashMap<String, Integer>> findBestSolution(String jumboWidth, List<String> uniqueWidth,
                                                                         List<String> widthOccurrences) throws IOException{
         String line = "python " + resolvePythonScriptPath("cssolver.py");
-        Process p = Runtime.getRuntime().exec(line + System.lineSeparator() + jumboWidth + System.lineSeparator()
-                + uniqueWidth.toString() + System.lineSeparator() + widthOccurrences.toString());
+        String uniqueWidthString = StringUtils.replaceAll(uniqueWidth.toString(), " ", "");
+        String widthOccurrencesString = StringUtils.replaceAll(widthOccurrences.toString(), " ", "");
+        Process p = Runtime.getRuntime().exec(line + " " + jumboWidth + " "
+                + uniqueWidthString + " " + widthOccurrencesString);
 
         List<LinkedHashMap<String, Integer>> results;
 

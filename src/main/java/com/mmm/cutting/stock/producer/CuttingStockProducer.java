@@ -26,15 +26,18 @@ public class CuttingStockProducer {
         List<LinkedHashMap<String, Integer>> nonNullResponse = new ArrayList<>();
         List<SingleCut> singleCutList = new ArrayList<>();
 
+        int jumboNumber = 1;
+
         for (LinkedHashMap<String, Integer> stringIntegerLinkedHashMap : response) {
             LinkedHashMap<String, Integer> hashMap = new LinkedHashMap<>();
             for (Map.Entry<String, Integer> entry : stringIntegerLinkedHashMap.entrySet()) {
                 if (entry.getValue() != 0) {
-                    SingleCut singleCut = new SingleCut(Double.parseDouble(entry.getKey()), entry.getValue());
+                    SingleCut singleCut = new SingleCut(Double.parseDouble(entry.getKey()), entry.getValue(), jumboNumber);
                     hashMap.put(entry.getKey(), entry.getValue());
                     singleCutList.add(singleCut);
                 }
             }
+            jumboNumber++;
             nonNullResponse.add(hashMap);
         }
 

@@ -90,8 +90,8 @@ public class CsvService {
         });
     }
 
-//    public static void main(String... args) throws IOException, InterruptedException {
-//
+    public static void main(String... args) throws IOException, InterruptedException {
+
 //        int count = 1;
 //        List<Process> process = new ArrayList<>(21);
 //
@@ -123,6 +123,6 @@ public class CsvService {
 //
 //        System.out.println("Still running processes");
 //        process.forEach(p -> System.out.println(" Pid: " + p.pid() + "isAlive: " + p.isAlive() + "\n"));
-//
-//    }
+
+    }
 }

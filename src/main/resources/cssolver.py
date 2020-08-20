@@ -71,7 +71,7 @@ def valid_pattern(final_patterns, jumbo_length):
         sum = 0
         for length, count in p.items():
             sum += length * count
-        if sum < jumbo_length - 10:
+        if sum > jumbo_length:
             return False
 
     return True

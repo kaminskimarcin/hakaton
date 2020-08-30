@@ -1,8 +1,8 @@
 package com.mmm.cuttingstock.controller;
 
-import com.mmm.cuttingstock.model.Order;
+import com.mmm.cuttingstock.dto.OrderDto;
 import com.mmm.cuttingstock.service.CuttingStockService;
-import com.mmm.cuttingstock.model.OrderResponse;
+import com.mmm.cuttingstock.dto.OrderResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +18,8 @@ public class CuttingStockController {
 	private final CuttingStockService cuttingStockService;
 
 	@PostMapping(value = "/generate")
-	private OrderResponse generate(@RequestBody Order order) throws IOException {
+	private OrderResponse generate(@RequestBody OrderDto order) throws IOException {
 		return cuttingStockService.calculate(order);
 	}
+
 }

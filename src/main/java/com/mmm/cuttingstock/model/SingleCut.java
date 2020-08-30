@@ -1,12 +1,24 @@
 package com.mmm.cuttingstock.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
+import javax.persistence.*;
+
+@Setter
+@Getter
+@Entity
+@Table(name = "single_cut")
 public class SingleCut {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
     private double value;
     private int quantity;
     private int jumboNumber;
+    private boolean isChecked;
+
 }
+
+

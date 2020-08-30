@@ -1,41 +1,60 @@
 package com.mmm.cuttingstock.producer;
 
-import com.mmm.cuttingstock.model.SingleCut;
-import com.mmm.cuttingstock.model.OrderResponse;
+import com.mmm.cuttingstock.dto.DtoEntityConverter;
+import com.mmm.cuttingstock.dto.SingleCutDto;
+import com.mmm.cuttingstock.dto.OrderResponse;
+import com.mmm.cuttingstock.model.Purchase;
+import com.mmm.cuttingstock.repository.OrderRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class CuttingStockProducer {
-	private static final String[] columns = {"width", "quantity"};
+    private static final String[] columns = {"width", "quantity"};
 
-	public OrderResponse prepareResult(List<LinkedHashMap<String, Integer>> response) {
-		OrderResponse orderResponse = new OrderResponse();
+    private final OrderRepository orderRepository;
+    private final DtoEntityConverter dtoEntityConverter;
 
-		List<LinkedHashMap<String, Integer>> nonNullResponse = new ArrayList<>();
-		List<SingleCut> singleCutList = new ArrayList<>();
+    public CuttingStockProducer(OrderRepository orderRepository, DtoEntityConverter dtoEntityConverter) {
+        this.orderRepository = orderRepository;
+        this.dtoEntityConverter = dtoEntityConverter;
+    }
 
-		int jumboNumber = 1;
+    public OrderResponse saveAndGetPreparedResult(List<LinkedHashMap<String, Integer>> solution, Purchase order) {
+        OrderResponse orderResponse = new OrderResponse();
 
-		for (LinkedHashMap<String, Integer> stringIntegerLinkedHashMap : response) {
-			LinkedHashMap<String, Integer> hashMap = new LinkedHashMap<>();
-			for (Map.Entry<String, Integer> entry : stringIntegerLinkedHashMap.entrySet()) {
-				if (entry.getValue() != 0) {
-					SingleCut singleCut = new SingleCut(Double.parseDouble(entry.getKey()), entry.getValue(), jumboNumber);
-					hashMap.put(entry.getKey(), entry.getValue());
-					singleCutList.add(singleCut);
-				}
-			}
-			jumboNumber++;
-			nonNullResponse.add(hashMap);
-		}
+        List<LinkedHashMap<String, Integer>> nonNullResponse = new ArrayList<>();
+        List<SingleCutDto> singleCutListDto = new ArrayList<>();
 
-		orderResponse.setRawData(singleCutList);
+        int jumboNumber = 1;
 
-		return orderResponse;
-	}
+        for (LinkedHashMap<String, Integer> stringIntegerLinkedHashMap : solution) {
+            LinkedHashMap<String, Integer> hashMap = new LinkedHashMap<>();
+            for (Map.Entry<String, Integer> entry : stringIntegerLinkedHashMap.entrySet()) {
+                if (entry.getValue() != 0) {
+                    SingleCutDto singleCut = new SingleCutDto(Double.parseDouble(entry.getKey()), entry.getValue(), jumboNumber);
+                    hashMap.put(entry.getKey(), entry.getValue());
+                    singleCutListDto.add(singleCut);
+                }
+            }
+            jumboNumber++;
+            nonNullResponse.add(hashMap);
+        }
+
+        var singleCuts = dtoEntityConverter.convertAllToSingleCuts(singleCutListDto);
+
+        Purchase savedOrder = orderRepository.save(order);
+        savedOrder.setSingleCuts(singleCuts);
+
+        savedOrder = orderRepository.save(savedOrder);
+
+        orderResponse.setRawData(dtoEntityConverter.convertAllToSingleCutDTOs(savedOrder.getSingleCuts()));
+
+        return orderResponse;
+    }
 }

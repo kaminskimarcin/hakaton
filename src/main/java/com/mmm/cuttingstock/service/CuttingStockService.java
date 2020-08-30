@@ -1,12 +1,11 @@
 package com.mmm.cuttingstock.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mmm.cuttingstock.model.Order;
-import com.mmm.cuttingstock.model.OrderResponse;
-import com.mmm.cuttingstock.model.SingleOrder;
+import com.mmm.cuttingstock.dto.DtoEntityConverter;
+import com.mmm.cuttingstock.dto.OrderDto;
+import com.mmm.cuttingstock.dto.OrderResponse;
+import com.mmm.cuttingstock.dto.SingleOrderDto;
 import com.mmm.cuttingstock.producer.CuttingStockProducer;
-import lombok.AllArgsConstructor;
-import lombok.var;
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
 public class CuttingStockService {
     private final CuttingStockProducer cuttingStockProducer;
     private final ObjectMapper objectMapper ;
+    private final DtoEntityConverter dtoEntityConverter;
 
     @Value("${script.path}")
     private String scriptPath;
@@ -32,9 +32,12 @@ public class CuttingStockService {
     @Value("${cutting_stock.script}")
     private String cuttingStockScript;
 
-    public CuttingStockService(CuttingStockProducer cuttingStockProducer, ObjectMapper objectMapper) {
+
+    public CuttingStockService(CuttingStockProducer cuttingStockProducer, ObjectMapper objectMapper,
+                               DtoEntityConverter dtoEntityConverter) {
         this.cuttingStockProducer = cuttingStockProducer;
         this.objectMapper = objectMapper;
+        this.dtoEntityConverter = dtoEntityConverter;
     }
 
     private String resolvePythonScriptPath(String filename) {
@@ -42,16 +45,16 @@ public class CuttingStockService {
         return file.getAbsolutePath();
     }
 
-    public OrderResponse calculate(Order order) throws IOException {
-        List<SingleOrder> singleOrders = order.getSingleOrders();
+    public OrderResponse calculate(OrderDto orderDto) throws IOException {
+        List<SingleOrderDto> singleOrders = orderDto.getSingleOrders();
         List<String> uniqueWidth = new ArrayList<>();
         List<String> widthOccurrences = new ArrayList<>();
 
         HashMap<Long, Long> widthWithOccurrences = new HashMap<>();
 
-        String jumboWidth = String.valueOf(order.getJumboWidth());
+        String jumboWidth = String.valueOf(orderDto.getJumboWidth());
 
-        for (SingleOrder singleOrder : singleOrders) {
+        for (SingleOrderDto singleOrder : singleOrders) {
             widthWithOccurrences.merge(singleOrder.getWidth(), singleOrder.getOrderQty(), Long::sum);
         }
 
@@ -62,7 +65,8 @@ public class CuttingStockService {
 
         List<LinkedHashMap<String, Integer>> cuttingStockBestSolution = findBestSolution(jumboWidth, uniqueWidth, widthOccurrences);
 
-        return cuttingStockProducer.prepareResult(cuttingStockBestSolution);
+        return cuttingStockProducer.saveAndGetPreparedResult(cuttingStockBestSolution,
+                dtoEntityConverter.convertToOrder(orderDto));
     }
 
     public List<LinkedHashMap<String, Integer>> findBestSolution(String jumboWidth, List<String> uniqueWidth,

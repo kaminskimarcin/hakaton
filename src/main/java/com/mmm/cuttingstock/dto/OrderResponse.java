@@ -1,4 +1,4 @@
-package com.mmm.cuttingstock.model;
+package com.mmm.cuttingstock.dto;
 
 import lombok.Data;
 
@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class OrderResponse {
-    private List<SingleCut> rawData;
+    private List<SingleCutDto> rawData;
 }

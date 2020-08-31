@@ -5,12 +5,10 @@ import com.mmm.cuttingstock.dto.SingleCutDto;
 import com.mmm.cuttingstock.dto.OrderResponse;
 import com.mmm.cuttingstock.model.Purchase;
 import com.mmm.cuttingstock.repository.OrderRepository;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -54,6 +52,9 @@ public class CuttingStockProducer {
         savedOrder = orderRepository.save(savedOrder);
 
         orderResponse.setRawData(dtoEntityConverter.convertAllToSingleCutDTOs(savedOrder.getSingleCuts()));
+
+        orderResponse.getRawData()
+                .sort(Comparator.comparingInt(SingleCutDto::getJumboNumber));
 
         return orderResponse;
     }

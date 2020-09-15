@@ -1,48 +1,31 @@
 package com.mmm.cuttingstock.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mmm.cuttingstock.dto.DtoEntityConverter;
-import com.mmm.cuttingstock.dto.OrderDto;
-import com.mmm.cuttingstock.dto.OrderResponse;
-import com.mmm.cuttingstock.dto.SingleOrderDto;
-import com.mmm.cuttingstock.producer.CuttingStockProducer;
-import org.h2.util.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mmm.cuttingstock.dto.*;
+import com.mmm.cuttingstock.producer.CuttingStockProducer;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+
 
 @Service
 public class CuttingStockService {
     private final CuttingStockProducer cuttingStockProducer;
     private final ObjectMapper objectMapper ;
     private final DtoEntityConverter dtoEntityConverter;
-
-    @Value("${script.path}")
-    private String scriptPath;
-
-    @Value("${cutting_stock.script}")
-    private String cuttingStockScript;
-
+    private final RestTemplate restTemplate;
 
     public CuttingStockService(CuttingStockProducer cuttingStockProducer, ObjectMapper objectMapper,
-                               DtoEntityConverter dtoEntityConverter) {
+                               DtoEntityConverter dtoEntityConverter, RestTemplate restTemplate) {
         this.cuttingStockProducer = cuttingStockProducer;
         this.objectMapper = objectMapper;
         this.dtoEntityConverter = dtoEntityConverter;
-    }
-
-    private String resolvePythonScriptPath(String filename) {
-        File file = new File(scriptPath + filename);
-        return file.getAbsolutePath();
+        this.restTemplate = restTemplate;
     }
 
     public OrderResponse calculate(OrderDto orderDto) throws IOException {
@@ -71,38 +54,13 @@ public class CuttingStockService {
 
     public List<LinkedHashMap<String, Integer>> findBestSolution(String jumboWidth, List<String> uniqueWidth,
                                                                         List<String> widthOccurrences) throws IOException{
-        String line = "python " + resolvePythonScriptPath(cuttingStockScript);
 
-        String uniqueWidthString = StringUtils.replaceAll(uniqueWidth.toString(), " ", "");
-        String widthOccurrencesString = StringUtils.replaceAll(widthOccurrences.toString(), " ", "");
+        String uniqueWidthString = uniqueWidth.toString().replace(" ", "");
+        String widthOccurrencesString = widthOccurrences.toString().replace(" ", "");
+        var results = restTemplate.postForEntity("http://localhost:5000/cuts",
+                new CalcOrderDto(jumboWidth, uniqueWidthString, widthOccurrencesString), String.class);
 
-        Process p = Runtime.getRuntime().exec(line + " " + jumboWidth + " "
-                + uniqueWidthString + " " + widthOccurrencesString);
-
-        List<LinkedHashMap<String, Integer>> results;
-
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-            results =  objectMapper.readValue(reader.lines().collect(Collectors.joining()).split("results")[1], List.class);
-        }
-
-        destroyProcessAsync(p);
-
-        return results;
-    }
-
-    private static void destroyProcessAsync(Process p) {
-        CompletableFuture.runAsync(() -> {
-            var destroyed = false;
-
-            try {
-                destroyed = p.waitFor(1, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Thread.currentThread().interrupt();
-            }
-            if (!destroyed || p.isAlive()) {
-                p.destroyForcibly();
-            }
-        });
+        return objectMapper.readValue(results.getBody(), objectMapper.getTypeFactory()
+                .constructCollectionType(List.class, Map.class));
     }
 }

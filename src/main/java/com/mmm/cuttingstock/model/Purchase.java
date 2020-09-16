@@ -12,20 +12,18 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode
 @Entity
-@Table(name = "purchase")
 public class Purchase {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
     private String salesOrder;
     private String item;
-    private String desc;
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "purchase_id")
+    @JoinColumn(name = "purchase_Id")
     private Set<SingleOrder> singleOrders = new HashSet<>();
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "purchase_id")
+    @JoinColumn(name = "purchase_Id")
     private Set<SingleCut> singleCuts = new HashSet<>();
     private Long jumboWidth;
 }

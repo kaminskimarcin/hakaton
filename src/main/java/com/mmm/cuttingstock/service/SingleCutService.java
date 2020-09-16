@@ -1,6 +1,5 @@
 package com.mmm.cuttingstock.service;
 
-import com.mmm.cuttingstock.model.SingleCut;
 import com.mmm.cuttingstock.repository.SingleCutRepository;
 import org.springframework.stereotype.Service;
 

@@ -8,7 +8,6 @@ import javax.persistence.*;
 @Setter
 @Getter
 @Entity
-@Table(name = "single_cut")
 public class SingleCut {
 
     @Id

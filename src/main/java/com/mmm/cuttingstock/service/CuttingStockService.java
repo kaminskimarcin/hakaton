@@ -1,17 +1,15 @@
 package com.mmm.cuttingstock.service;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mmm.cuttingstock.dto.*;
 import com.mmm.cuttingstock.producer.CuttingStockProducer;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-
 import java.io.IOException;
 import java.util.*;
-
 
 @Service
 public class CuttingStockService {
@@ -19,6 +17,9 @@ public class CuttingStockService {
     private final ObjectMapper objectMapper ;
     private final DtoEntityConverter dtoEntityConverter;
     private final RestTemplate restTemplate;
+
+    @Value("${calc.service.url}")
+    private String calcServiceUrl;
 
     public CuttingStockService(CuttingStockProducer cuttingStockProducer, ObjectMapper objectMapper,
                                DtoEntityConverter dtoEntityConverter, RestTemplate restTemplate) {
@@ -57,7 +58,7 @@ public class CuttingStockService {
 
         String uniqueWidthString = uniqueWidth.toString().replace(" ", "");
         String widthOccurrencesString = widthOccurrences.toString().replace(" ", "");
-        var results = restTemplate.postForEntity("http://localhost:5000/cuts",
+        var results = restTemplate.postForEntity(calcServiceUrl,
                 new CalcOrderDto(jumboWidth, uniqueWidthString, widthOccurrencesString), String.class);
 
         return objectMapper.readValue(results.getBody(), objectMapper.getTypeFactory()
